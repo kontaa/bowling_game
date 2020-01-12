@@ -8,71 +8,71 @@ class BowlingGame
     @spare = false
     @strike = 0
     @strike2 = 0
-    @last_pins = 0
-    @frame = 0      # {0, 1}
     @frames = [Frame.new]
+    @spare_frame = nil
+    @strike_frame = nil
   end
 
   def record_shot(pins)
-    f = @frames.last
-    f.record_shot(pins)
+    curr_frame.record_shot(pins)
 
-    add_score(pins) if spare_at_prev?
     add_score(pins)
-    add_score(pins + @last_pins) if strike_at_prev2?
 
+    if spare_at_prev?
+      add_score(pins)
+      @spare_frame.add_bonus(pins)
+      @spare_frame = nil
+    end
     reset_spare
-    dec_count_for_strike
+    set_spare if curr_frame.spare?
 
-    set_strike if strike?(pins)
-    set_spare if spare?(pins)
-    save_at(pins)
-    if strike_at?
-      frame_first
-    else
-      frame_next
+    if @strike == 2
+      add_score(pins)
+      @strike_frame.add_bonus(pins) if @strike_frame
     end
-    if f.finished?
-      @frames << Frame.new
+    if @strike2 == 2
+      add_score(pins)
+      @strike2_frame.add_bonus(pins) if @strike2_frame
     end
+    if @strike == 1
+      add_score(pins)
+      @strike_frame.add_bonus(pins) if @strike_frame
+    end
+    if @strike2 == 1
+      add_score(pins)
+      @strike2_frame.add_bonus(pins) if @strike2_frame
+    end
+    dec_count_for_strike
+    set_strike if curr_frame.strike?
+
+    @frames << Frame.new if curr_frame.finished?
   end
 
   def score_frame(frame_no)
     @frames[frame_no -1].score
   end
 
+  #-----------
   private
+
+  def curr_frame
+    @frames.last
+  end
 
   def dec_count_for_strike
     @strike -= 1 if @strike > 0
     @strike2 -= 1 if @strike2 > 0
-  end
-
-  def strike_at_prev2?
-    (@strike == 1 || @strike2 == 1)
-  end
-
-  def save_at(pins)
-    @last_pins = pins
-  end
-
-  def strike_at?
-    (@strike == 2 || @strike2 == 2)
-  end
-
-  def add_score(pins)
-    @score += pins
-  end
-
-  def strike?(pins)
-    (pins == 10 && @frame == 0)
+    @strike_frame = nil if @strike == 0
+    @strike2_frame = nil if @strike2 == 0
   end
 
   def set_strike
     if @strike == 0
       @strike = 2
+      @strike_frame = @frames.last
     else
       @strike2 = 2
+      @strike2_frame = @frames.last
     end
   end
 
@@ -82,26 +82,18 @@ class BowlingGame
 
   def set_spare
     @spare = true
+    @spare_frame = @frames.last
   end
 
   def spare_at_prev?
     @spare
   end
 
-  def spare?(pins)
-    (pins != 0 && (@last_pins + pins) == 10 && @frame == 1)
+  ###
+
+  def add_score(pins)
+    @score += pins
   end
 
-  def frame_first
-    @frame = 0
-  end
-
-  def frame_next
-    @frame = next_frame
-  end
-
-  def next_frame
-    (@frame + 1) % 2
-  end
 end
 
