@@ -11,50 +11,45 @@ class BowlingGame
   end
 
   def record_shot(pins)
-    if spare_at_prev?
-      @score += pins * 2
-    else
-      @score += pins
-    end
+    add_score(pins) if spare_at_prev?
+    add_score(pins)
+    add_score(pins + @last_pins) if strike_at_prev2?
+
     reset_spare
+    dec_count_for_strike
 
-    if @strike == 2
-
-      @strike = 1
-    elsif @strike == 1
-      @score += pins + @last_pins
-      @strike = 0
-    end
-
-    if @strike2 == 2
-
-      @strike2 = 1
-    elsif @strike2 == 1
-      @score += pins + @last_pins
-      @strike2 = 0
-    end
-
-
-    #-------------
-
-    if strike?(pins)
-      set_strike
-    end
-
-    if spare?(pins)
-      set_spare
-    end
-
-    @last_pins = pins
-
-    if @strike == 2 || @strike2 == 2
-      @frame = 0
+    set_strike if strike?(pins)
+    set_spare if spare?(pins)
+    save_at(pins)
+    if strike_at?
+      frame_first
     else
-      @frame = next_frame
+      frame_next
     end
   end
 
   private
+
+  def dec_count_for_strike
+    @strike -= 1 if @strike > 0
+    @strike2 -= 1 if @strike2 > 0
+  end
+
+  def strike_at_prev2?
+    (@strike == 1 || @strike2 == 1)
+  end
+
+  def save_at(pins)
+    @last_pins = pins
+  end
+
+  def strike_at?
+    (@strike == 2 || @strike2 == 2)
+  end
+
+  def add_score(pins)
+    @score += pins
+  end
 
   def strike?(pins)
     (pins == 10 && @frame == 0)
@@ -82,6 +77,14 @@ class BowlingGame
 
   def spare?(pins)
     (pins != 0 && (@last_pins + pins) == 10 && @frame == 1)
+  end
+
+  def frame_first
+    @frame = 0
+  end
+
+  def frame_next
+    @frame = next_frame
   end
 
   def next_frame
