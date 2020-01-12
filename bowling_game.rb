@@ -15,17 +15,43 @@ class BowlingGame
 
   def record_shot(pins)
     curr_frame.record_shot(pins)
-
     add_score(pins)
+    spare_judge_and_bonus(pins)
+    strike_judge_and_bonus(pins)
+    @frames << Frame.new if curr_frame.finished?
+  end
 
-    if spare_at_prev?
+  def score_frame(frame_no)
+    @frames[frame_no -1].score
+  end
+
+  #-----------
+  private
+
+  def curr_frame
+    @frames.last
+  end
+
+  def spare_judge_and_bonus(pins)
+    if @spare
       add_score(pins)
       @spare_frame.add_bonus(pins)
       @spare_frame = nil
     end
     reset_spare
     set_spare if curr_frame.spare?
+  end
 
+  def reset_spare
+    @spare = false
+  end
+
+  def set_spare
+    @spare = true
+    @spare_frame = @frames.last
+  end
+
+  def strike_judge_and_bonus(pins)
     if @strike == 2
       add_score(pins)
       @strike_frame.add_bonus(pins) if @strike_frame
@@ -44,19 +70,6 @@ class BowlingGame
     end
     dec_count_for_strike
     set_strike if curr_frame.strike?
-
-    @frames << Frame.new if curr_frame.finished?
-  end
-
-  def score_frame(frame_no)
-    @frames[frame_no -1].score
-  end
-
-  #-----------
-  private
-
-  def curr_frame
-    @frames.last
   end
 
   def dec_count_for_strike
@@ -74,19 +87,6 @@ class BowlingGame
       @strike2 = 2
       @strike2_frame = @frames.last
     end
-  end
-
-  def reset_spare
-    @spare = false
-  end
-
-  def set_spare
-    @spare = true
-    @spare_frame = @frames.last
-  end
-
-  def spare_at_prev?
-    @spare
   end
 
   ###
