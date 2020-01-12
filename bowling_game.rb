@@ -5,6 +5,7 @@ class BowlingGame
     @score = 0
     @spare = false
     @strike = 0
+    @strike2 = 0
     @last_pins = 0
     @frame = 0      # {0, 1}
   end
@@ -25,6 +26,15 @@ class BowlingGame
       @strike = 0
     end
 
+    if @strike2 == 2
+
+      @strike2 = 1
+    elsif @strike2 == 1
+      @score += pins + @last_pins
+      @strike2 = 0
+    end
+
+
     #-------------
 
     if strike?(pins)
@@ -37,7 +47,7 @@ class BowlingGame
 
     @last_pins = pins
 
-    if @strike == 2
+    if @strike == 2 || @strike2 == 2
       @frame = 0
     else
       @frame = next_frame
@@ -51,7 +61,11 @@ class BowlingGame
   end
 
   def set_strike
-    @strike = 2
+    if @strike == 0
+      @strike = 2
+    else
+      @strike2 = 2
+    end
   end
 
   def reset_spare
