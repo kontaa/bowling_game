@@ -71,7 +71,7 @@ class BowlingGameTest < Test::Unit::TestCase
     assert_equal 23, @game.score
   end
 
-  test 'ストライク 10 10 3,1 0...' do
+  test 'ストライク ダブル 10 10 3,1 0...' do
     record_shot_times(10, 1)
     # skip shot
     record_shot_times(10, 1)
@@ -82,15 +82,17 @@ class BowlingGameTest < Test::Unit::TestCase
     assert_equal 41, @game.score
   end
 
-  test 'ストライク 10 10 1,0 0...' do
+  test 'ストライク ターキー 10 10 10 3,1 0...' do
+    record_shot_times(10, 1)
+    # skip shot
     record_shot_times(10, 1)
     # skip shot
     record_shot_times(10, 1)
     # skip shot
     record_shot_times(3, 1)
     record_shot_times(1, 1)
-    record_shot_times(0, 14)
-    assert_equal 41, @game.score
+    record_shot_times(0, 12)
+    assert_equal 71, @game.score
   end
 
   private
