@@ -95,6 +95,45 @@ class BowlingGameTest < Test::Unit::TestCase
     assert_equal 71, @game.score
   end
 
+  test 'ストライク＆スペア 10 5,5 3,0 0...' do
+    record_shot_times(10, 1)
+    # skip shot
+    record_shot_times(5, 1)
+    record_shot_times(5, 1)
+    record_shot_times(3, 1)
+    record_shot_times(0, 1)
+    record_shot_times(0, 14)
+    assert_equal 36, @game.score
+  end
+
+  test 'ストライク＆スペア 10 10 5,5 3,0 0...' do
+    record_shot_times(10, 1)
+    # skip shot
+    record_shot_times(10, 1)
+    # skip shot
+    record_shot_times(5, 1)
+    record_shot_times(5, 1)
+    record_shot_times(3, 1)
+    record_shot_times(0, 1)
+    record_shot_times(0, 12)
+    assert_equal 61, @game.score
+  end
+
+  test 'ストライク＆スペア&ストライク 10 10 5,5 10 3,0 0...' do
+    record_shot_times(10, 1)
+    # skip shot
+    record_shot_times(10, 1)
+    # skip shot
+    record_shot_times(5, 1)
+    record_shot_times(5, 1)
+    record_shot_times(10, 1)
+    # skip shot
+    record_shot_times(3, 1)
+    record_shot_times(0, 1)
+    record_shot_times(0, 10)
+    assert_equal 81, @game.score
+  end
+
   private
 
   def record_shot_times(pins, n)
