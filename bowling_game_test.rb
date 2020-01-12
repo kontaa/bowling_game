@@ -60,6 +60,17 @@ class BowlingGameTest < Test::Unit::TestCase
     assert_equal 22, @game.score
   end
 
+  test 'ストライク 10 3,3 1,0 0...' do
+    record_shot_times(10, 1)
+    # skip shot
+    record_shot_times(3, 1)
+    record_shot_times(3, 1)
+    record_shot_times(1, 1)
+    record_shot_times(0, 1)
+    record_shot_times(0, 14)
+    assert_equal 23, @game.score
+  end
+
   private
 
   def record_shot_times(pins, n)
