@@ -1,4 +1,6 @@
 class BowlingGame
+  attr_reader :score
+
   def initialize
     @score = 0
     @spare = false
@@ -7,23 +9,41 @@ class BowlingGame
   end
 
   def record_shot(pins)
-    if @spare
+    if spare_at_prev?
       @score += pins * 2
-      @spare = false
     else
       @score += pins
     end
+    reset_spare
 
-    if pins != 0 && (@last_pins + pins) == 10 && @frame == 1
-      @spare = true
+    if spare?(pins)
+      set_spare
     end
 
     @last_pins = pins
-    @frame = (@frame + 1) % 2
+    @frame = next_frame
   end
 
-  def score
-    @score 
+  private
+
+  def reset_spare
+    @spare = false
+  end
+
+  def set_spare
+    @spare = true
+  end
+
+  def spare_at_prev?
+    @spare
+  end
+
+  def spare?(pins)
+    (pins != 0 && (@last_pins + pins) == 10 && @frame == 1)
+  end
+
+  def next_frame
+    (@frame + 1) % 2
   end
 end
 
