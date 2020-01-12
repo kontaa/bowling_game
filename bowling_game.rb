@@ -1,3 +1,5 @@
+require './frame'
+
 class BowlingGame
   attr_reader :score
 
@@ -8,9 +10,13 @@ class BowlingGame
     @strike2 = 0
     @last_pins = 0
     @frame = 0      # {0, 1}
+    @frames = [Frame.new]
   end
 
   def record_shot(pins)
+    f = @frames.last
+    f.record_shot(pins)
+
     add_score(pins) if spare_at_prev?
     add_score(pins)
     add_score(pins + @last_pins) if strike_at_prev2?
@@ -26,6 +32,13 @@ class BowlingGame
     else
       frame_next
     end
+    if f.finished?
+      @frames << Frame.new
+    end
+  end
+
+  def score_frame(frame_no)
+    @frames[frame_no -1].score
   end
 
   private

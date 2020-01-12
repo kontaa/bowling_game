@@ -1,7 +1,16 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (11.0.1)
+    coderay (1.1.2)
+    method_source (0.9.2)
     power_assert (1.1.5)
+    pry (0.12.2)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
+    pry-byebug (3.7.0)
+      byebug (~> 11.0)
+      pry (~> 0.10)
     test-unit (3.3.5)
       power_assert
 
@@ -9,6 +18,7 @@ PLATFORMS
   x64-mingw32
 
 DEPENDENCIES
+  pry-byebug
   test-unit
 
 BUNDLED WITH

@@ -1,4 +1,6 @@
+require 'bundler/setup'
 require 'test/unit'
+#require 'pry-byebug'
 
 # Windows では winpty を使うことで、red green 表示できる
 #
@@ -132,6 +134,26 @@ class BowlingGameTest < Test::Unit::TestCase
     record_shot_times(0, 1)
     record_shot_times(0, 10)
     assert_equal 81, @game.score
+  end
+
+  test '全ての投球がガターの場合の第１フレームの得点' do
+    record_shot_times(0, 20)
+    assert_equal 0, @game.score_frame(1)
+  end
+
+  test '全ての投球がガターの場合の第１0フレームの得点' do
+    record_shot_times(0, 20)
+    assert_equal 0, @game.score_frame(10)
+  end
+
+  test '全ての投球が1ピンの場合の第１フレームの得点' do
+    record_shot_times(1, 20)
+    assert_equal 2, @game.score_frame(1)
+  end
+
+  test '全ての投球が1ピンの場合の第10フレームの得点' do
+    record_shot_times(1, 20)
+    assert_equal 2, @game.score_frame(10)
   end
 
   private
