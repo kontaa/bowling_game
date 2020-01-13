@@ -146,6 +146,37 @@ class FrameTest < Test::Unit::TestCase
     assert_equal 30, @f.score
   end
 
+  test 'オープンフレームにはボーナス不要' do
+    @f.record_shot(3)
+    @f.record_shot(3)
+    refute @f.need_bonus?
+  end
+
+  test 'スペアにはボーナス要 3,7 4' do
+    @f.record_shot(3)
+    @f.record_shot(7)
+    assert @f.need_bonus?
+    @f.add_bonus(4)
+    refute @f.need_bonus?
+  end
+
+  test 'スペアにはボーナス要 3,7 0' do
+    @f.record_shot(3)
+    @f.record_shot(7)
+    assert @f.need_bonus?
+    @f.add_bonus(0)
+    refute @f.need_bonus?
+  end
+
+  test 'ストライクにはボーナス要 10 4' do
+    @f.record_shot(10)
+    # skip
+    assert @f.need_bonus?
+    @f.add_bonus(4)
+    assert @f.need_bonus?
+    @f.add_bonus(6)
+    refute @f.need_bonus?
+  end
 
 
 end

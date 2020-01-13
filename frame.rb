@@ -3,6 +3,7 @@ class Frame
     @score = 0
     @count = 0
     @bonus = 0
+    @bonus_count = 0
   end
 
   def record_shot(pins)
@@ -27,7 +28,19 @@ class Frame
   end
 
   def add_bonus(bonus)
+    @bonus_count += 1
     @bonus += bonus
   end
+
+  def need_bonus?
+    if spare?
+      @bonus_count < 1
+    elsif strike?
+      @bonus_count < 2
+    else
+      false
+    end
+  end
+
 end
 
