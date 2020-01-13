@@ -1,4 +1,6 @@
 class Frame
+  PINS = (0..10).to_a
+
   def initialize
     @score = 0
     @count = 0
@@ -7,6 +9,14 @@ class Frame
   end
 
   def record_shot(pins)
+    unless PINS.include? pins
+      s = "bad pins= #{pins}"
+      raise ArgumentError.new s
+    end
+    unless (pins + @score) <= 10
+      s = "bad pins= #{pins}, score over (now score= #{@score})"
+      raise ArgumentError.new s
+    end
     @score += pins
     @count += 1
   end

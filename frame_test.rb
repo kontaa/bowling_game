@@ -178,6 +178,24 @@ class FrameTest < Test::Unit::TestCase
     refute @f.need_bonus?
   end
 
+  test 'ピン数は0以上' do
+    assert_raises(ArgumentError) do
+      @f.record_shot(-1)
+    end
+  end
+
+  test 'ピン数は10以下' do
+    assert_raises(ArgumentError) do
+      @f.record_shot(11)
+    end
+  end
+
+  test 'フレームに記録できるのは10ピンまで' do
+    assert_raises(ArgumentError) do
+      @f.record_shot(5)
+      @f.record_shot(6)
+    end
+  end
 
 end
 
