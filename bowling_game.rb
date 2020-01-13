@@ -7,11 +7,7 @@ class BowlingGame
   end
 
   def score
-    score = 0
-    @frames.each do |f|
-      score += f.score
-    end
-    score
+    @frames.map{|f| f.score}.sum
   end
 
   def record_shot(pins)
