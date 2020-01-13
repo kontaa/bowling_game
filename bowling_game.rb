@@ -13,7 +13,7 @@ class BowlingGame
   def record_shot(pins)
     curr_frame.record_shot(pins)
     bonus(pins)
-    if curr_frame.spare? or  curr_frame.strike?
+    if curr_frame.spare? or curr_frame.strike?
       set_bonus
     end
     @frames << Frame.new if curr_frame.finished?
