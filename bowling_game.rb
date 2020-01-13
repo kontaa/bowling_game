@@ -11,12 +11,12 @@ class BowlingGame
   end
 
   def record_shot(pins)
-    curr_frame.record_shot(pins)
-    bonus(pins)
-    if curr_frame.spare? or curr_frame.strike?
-      set_bonus
-    end
-    @frames << Frame.new if curr_frame.finished?
+    f = @frames.last
+    f.record_shot(pins)
+    calc_bonus(pins)
+    @bonus = update_bonus
+    @bonus << f if f.spare? or f.strike?
+    @frames << Frame.new if f.finished?
   end
 
   def score_frame(frame_no)
@@ -27,21 +27,16 @@ class BowlingGame
   private
   #-----------
 
-  def curr_frame
-    @frames.last
-  end
-
-  def bonus(pins)
-    @bonus = @bonus.select do |f|
-      if f.need_bonus?
-        f.add_bonus(pins)
-        f.need_bonus?
-      end
+  def calc_bonus(pins)
+    @bonus.each do |f|
+      f.add_bonus(pins) if f.need_bonus?
     end
   end
-
-  def set_bonus
-    @bonus << curr_frame
+  
+  def update_bonus
+    @bonus.select do |f|
+      f.need_bonus?
+    end
   end
 
 end
