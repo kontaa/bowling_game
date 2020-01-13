@@ -1,10 +1,7 @@
 require './frame'
 
 class BowlingGame
-  attr_reader :score
-
   def initialize
-    @score = 0
     @spare = false
     @strike = 0
     @strike2 = 0
@@ -13,9 +10,16 @@ class BowlingGame
     @strike_frame = nil
   end
 
+  def score
+    score = 0
+    @frames.each do |f|
+      score += f.score
+    end
+    score
+  end
+
   def record_shot(pins)
     curr_frame.record_shot(pins)
-    add_score(pins)
     spare_judge_and_bonus(pins)
     strike_judge_and_bonus(pins)
     @frames << Frame.new if curr_frame.finished?
@@ -34,7 +38,6 @@ class BowlingGame
 
   def spare_judge_and_bonus(pins)
     if @spare
-      add_score(pins)
       @spare_frame.add_bonus(pins)
       @spare_frame = nil
     end
@@ -53,19 +56,15 @@ class BowlingGame
 
   def strike_judge_and_bonus(pins)
     if @strike == 2
-      add_score(pins)
       @strike_frame.add_bonus(pins) if @strike_frame
     end
     if @strike2 == 2
-      add_score(pins)
       @strike2_frame.add_bonus(pins) if @strike2_frame
     end
     if @strike == 1
-      add_score(pins)
       @strike_frame.add_bonus(pins) if @strike_frame
     end
     if @strike2 == 1
-      add_score(pins)
       @strike2_frame.add_bonus(pins) if @strike2_frame
     end
     dec_count_for_strike
@@ -87,12 +86,6 @@ class BowlingGame
       @strike2 = 2
       @strike2_frame = @frames.last
     end
-  end
-
-  ###
-
-  def add_score(pins)
-    @score += pins
   end
 
 end
