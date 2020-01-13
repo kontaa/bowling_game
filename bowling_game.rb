@@ -2,12 +2,16 @@ require './frame'
 
 class BowlingGame
   def initialize
-    @spare = false
-    @strike = 0
-    @strike2 = 0
     @frames = [Frame.new]
+
+    @spare = 0
     @spare_frame = nil
+
+    @strike = 0
     @strike_frame = nil
+
+    @double = 0
+    @double_frame = nil
   end
 
   def score
@@ -20,8 +24,20 @@ class BowlingGame
 
   def record_shot(pins)
     curr_frame.record_shot(pins)
-    spare_judge_and_bonus(pins)
-    strike_judge_and_bonus(pins)
+    spare_bonus(pins)
+    strike_bonus(pins)
+    double_bonus(pins)
+
+    if curr_frame.spare?
+      set_spare
+    end
+    if curr_frame.strike?
+      if @strike == 0
+        set_strike
+      else
+        set_double
+      end
+    end
     @frames << Frame.new if curr_frame.finished?
   end
 
@@ -31,61 +47,49 @@ class BowlingGame
 
   #-----------
   private
+  #-----------
 
   def curr_frame
     @frames.last
   end
 
-  def spare_judge_and_bonus(pins)
-    if @spare
+  def spare_bonus(pins)
+    if @spare > 0
+      @spare -= 1
       @spare_frame.add_bonus(pins)
       @spare_frame = nil
     end
-    reset_spare
-    set_spare if curr_frame.spare?
-  end
-
-  def reset_spare
-    @spare = false
   end
 
   def set_spare
-    @spare = true
+    @spare = 1
     @spare_frame = @frames.last
   end
 
-  def strike_judge_and_bonus(pins)
-    if @strike == 2
-      @strike_frame.add_bonus(pins) if @strike_frame
+  def strike_bonus(pins)
+    if @strike > 0
+      @strike -= 1
+      @strike_frame.add_bonus(pins)
+      @strike_frame = nil if @strike == 0
     end
-    if @strike2 == 2
-      @strike2_frame.add_bonus(pins) if @strike2_frame
-    end
-    if @strike == 1
-      @strike_frame.add_bonus(pins) if @strike_frame
-    end
-    if @strike2 == 1
-      @strike2_frame.add_bonus(pins) if @strike2_frame
-    end
-    dec_count_for_strike
-    set_strike if curr_frame.strike?
-  end
-
-  def dec_count_for_strike
-    @strike -= 1 if @strike > 0
-    @strike2 -= 1 if @strike2 > 0
-    @strike_frame = nil if @strike == 0
-    @strike2_frame = nil if @strike2 == 0
   end
 
   def set_strike
-    if @strike == 0
-      @strike = 2
-      @strike_frame = @frames.last
-    else
-      @strike2 = 2
-      @strike2_frame = @frames.last
+    @strike = 2
+    @strike_frame = @frames.last
+  end
+
+  def double_bonus(pins)
+    if @double > 0
+      @double -= 1
+      @double_frame.add_bonus(pins)
+      @double_frame = nil if @double == 0
     end
+  end
+    
+  def set_double
+    @double = 2
+    @double_frame = @frames.last
   end
 
 end
