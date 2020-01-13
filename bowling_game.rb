@@ -4,8 +4,7 @@ class BowlingGame
   def initialize
     @frames = [Frame.new]
     @spare_frame = nil
-    @strike_frame = nil
-    @double_frame = nil
+    @strikes = []
   end
 
   def score
@@ -20,17 +19,10 @@ class BowlingGame
     curr_frame.record_shot(pins)
 
     spare_bonus(pins)
-    @spare_frame = curr_frame if curr_frame.spare?
+    set_spare if curr_frame.spare?
 
     strike_bonus(pins)
-    double_bonus(pins)
-    if curr_frame.strike?
-      if @strike_frame.nil?
-        set_strike
-      else
-        set_double
-      end
-    end
+    set_strike if curr_frame.strike?
 
     @frames << Frame.new if curr_frame.finished?
   end
@@ -54,26 +46,21 @@ class BowlingGame
     end
   end
 
+  def set_spare
+    @spare_frame = curr_frame
+  end
+
   def strike_bonus(pins)
-    if @strike_frame&.need_bonus?
-      @strike_frame.add_bonus(pins)
-      @strike_frame = nil unless @strike_frame.need_bonus?
+    @strikes = @strikes.select do |f|
+      if f.need_bonus?
+        f.add_bonus(pins)
+        f.need_bonus?
+      end
     end
   end
 
   def set_strike
-    @strike_frame = curr_frame
-  end
-
-  def double_bonus(pins)
-    if @double_frame&.need_bonus?
-      @double_frame.add_bonus(pins)
-      @double_frame = nil unless @double_frame.need_bonus?
-    end
-  end
-    
-  def set_double
-    @double_frame = curr_frame
+    @strikes << curr_frame
   end
 
 end
