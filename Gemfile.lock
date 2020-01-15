@@ -11,7 +11,6 @@ GEM
     pry-byebug (3.7.0)
       byebug (~> 11.0)
       pry (~> 0.10)
-    rake (13.0.1)
     test-unit (3.3.5)
       power_assert
 
@@ -20,7 +19,6 @@ PLATFORMS
 
 DEPENDENCIES
   pry-byebug
-  rake
   test-unit
 
 BUNDLED WITH

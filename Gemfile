@@ -7,6 +7,5 @@ source "https://rubygems.org"
 
 gem "test-unit"
 gem "pry-byebug"
-gem "rake"
 
 
