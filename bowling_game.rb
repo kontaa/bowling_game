@@ -20,7 +20,7 @@ class BowlingGame
   end
 
   def score_frame(frame_no)
-    @frames[frame_no -1].score
+    @frames[frame_no - 1].score
   end
 
   #-----------
